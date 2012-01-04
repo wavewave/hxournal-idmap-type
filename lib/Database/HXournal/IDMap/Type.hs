@@ -16,6 +16,7 @@ import qualified Data.Map as M
 
 import Data.Acid 
 import Data.UUID
+import Data.UUID.Instances 
 import Data.Aeson
 import Data.Text.Encoding as E
 import qualified Data.ByteString.Char8 as C
@@ -27,6 +28,7 @@ data HXournalIDMapInfo = HXournalIDMapInfo {
 } deriving (Show,Typeable,Data)
 
 
+{-
 instance FromJSON UUID where
   parseJSON x = do r <- return . fromString . C.unpack . E.encodeUtf8 =<< parseJSON x
                    case r of 
@@ -35,6 +37,7 @@ instance FromJSON UUID where
 
 instance ToJSON UUID where
   toJSON = toJSON . E.decodeUtf8 . C.pack . toString 
+-}
 
 instance FromJSON HXournalIDMapInfo where
   parseJSON (Object v) = HXournalIDMapInfo <$>  v .: "uuid" <*> v .: "name"
@@ -42,12 +45,13 @@ instance FromJSON HXournalIDMapInfo where
 instance ToJSON HXournalIDMapInfo where
   toJSON (HXournalIDMapInfo uuid name) = object [ "uuid" .= uuid , "name" .= name ] 
 
-
+{-
 instance SafeCopy UUID where 
   putCopy uuid = contain $ safePut (toByteString uuid) 
   getCopy = contain 
             $ maybe (fail "cannot parse UUID") return . fromByteString 
               =<< safeGet
+-}
 
 $(deriveSafeCopy 0 'base ''HXournalIDMapInfo)
 

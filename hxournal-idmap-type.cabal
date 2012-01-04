@@ -23,5 +23,6 @@ Library
                    acid-state == 0.6.*, 
                    bytestring == 0.9.*, 
                    text == 0.11.*, 
-                   aeson==0.4.*
+                   aeson==0.4.*, 
+                   uuid-instance >= 0.0.999 && < 0.2
   exposed-modules: Database.HXournal.IDMap.Type
