@@ -1,5 +1,5 @@
 Name:		hxournal-idmap-type
-Version:	0.0
+Version:	0.0.999
 Synopsis:	CRUD sample type 
 Description: 	CRUD sample type 
 License: 	BSD3
@@ -24,5 +24,6 @@ Library
                    bytestring == 0.9.*, 
                    text == 0.11.*, 
                    aeson==0.4.*, 
-                   uuid-instance >= 0.0.999 && < 0.2
+                   uuid-instance >= 0.0.999 && < 0.2, 
+                   time == 1.2.*
   exposed-modules: Database.HXournal.IDMap.Type

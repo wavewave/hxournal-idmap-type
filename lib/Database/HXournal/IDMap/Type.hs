@@ -21,37 +21,24 @@ import Data.Aeson
 import Data.Text.Encoding as E
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString as B
+import Data.Time.Clock
 
 data HXournalIDMapInfo = HXournalIDMapInfo { 
   hxournal_idmap_uuid :: UUID, 
-  hxournal_idmap_name :: String
+  hxournal_idmap_name :: String, 
+  hxournal_idmap_creationtime :: UTCTime 
 } deriving (Show,Typeable,Data)
 
 
-{-
-instance FromJSON UUID where
-  parseJSON x = do r <- return . fromString . C.unpack . E.encodeUtf8 =<< parseJSON x
-                   case r of 
-                     Nothing -> fail ("UUID parsing failed " ++ show x )
-                     Just uuid -> return uuid 
-
-instance ToJSON UUID where
-  toJSON = toJSON . E.decodeUtf8 . C.pack . toString 
--}
 
 instance FromJSON HXournalIDMapInfo where
-  parseJSON (Object v) = HXournalIDMapInfo <$>  v .: "uuid" <*> v .: "name"
+  parseJSON (Object v) = HXournalIDMapInfo <$>  v .: "uuid" <*> v .: "name" <*> v .: "creationtime"
 
 instance ToJSON HXournalIDMapInfo where
-  toJSON (HXournalIDMapInfo uuid name) = object [ "uuid" .= uuid , "name" .= name ] 
+  toJSON (HXournalIDMapInfo uuid name ctime) = object [ "uuid" .= uuid
+                                                      , "name" .= name
+                                                      , "creationtime" .= ctime ] 
 
-{-
-instance SafeCopy UUID where 
-  putCopy uuid = contain $ safePut (toByteString uuid) 
-  getCopy = contain 
-            $ maybe (fail "cannot parse UUID") return . fromByteString 
-              =<< safeGet
--}
 
 $(deriveSafeCopy 0 'base ''HXournalIDMapInfo)
 
