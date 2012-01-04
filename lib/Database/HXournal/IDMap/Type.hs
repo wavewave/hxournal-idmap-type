@@ -21,9 +21,9 @@ import Data.Text.Encoding as E
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString as B
 
-data Hxournal-idmapInfo = Hxournal-idmapInfo { 
-  hxournal-idmap_uuid :: UUID, 
-  hxournal-idmap_name :: String
+data HXournalIDMapInfo = HXournalIDMapInfo { 
+  hxournal_idmap_uuid :: UUID, 
+  hxournal_idmap_name :: String
 } deriving (Show,Typeable,Data)
 
 
@@ -36,11 +36,11 @@ instance FromJSON UUID where
 instance ToJSON UUID where
   toJSON = toJSON . E.decodeUtf8 . C.pack . toString 
 
-instance FromJSON Hxournal-idmapInfo where
-  parseJSON (Object v) = Hxournal-idmapInfo <$>  v .: "uuid" <*> v .: "name"
+instance FromJSON HXournalIDMapInfo where
+  parseJSON (Object v) = HXournalIDMapInfo <$>  v .: "uuid" <*> v .: "name"
 
-instance ToJSON Hxournal-idmapInfo where
-  toJSON (Hxournal-idmapInfo uuid name) = object [ "uuid" .= uuid , "name" .= name ] 
+instance ToJSON HXournalIDMapInfo where
+  toJSON (HXournalIDMapInfo uuid name) = object [ "uuid" .= uuid , "name" .= name ] 
 
 
 instance SafeCopy UUID where 
@@ -49,36 +49,36 @@ instance SafeCopy UUID where
             $ maybe (fail "cannot parse UUID") return . fromByteString 
               =<< safeGet
 
-$(deriveSafeCopy 0 'base ''Hxournal-idmapInfo)
+$(deriveSafeCopy 0 'base ''HXournalIDMapInfo)
 
-type Hxournal-idmapInfoRepository = M.Map UUID Hxournal-idmapInfo 
+type HXournalIDMapInfoRepository = M.Map UUID HXournalIDMapInfo 
 
-addHxournal-idmap :: Hxournal-idmapInfo -> Update Hxournal-idmapInfoRepository Hxournal-idmapInfo 
-addHxournal-idmap minfo = do 
+addHXournalIDMap :: HXournalIDMapInfo -> Update HXournalIDMapInfoRepository HXournalIDMapInfo 
+addHXournalIDMap minfo = do 
   m <- get 
-  let (r,m') = M.insertLookupWithKey (\_k _o n -> n) (hxournal-idmap_uuid minfo) minfo m
+  let (r,m') = M.insertLookupWithKey (\_k _o n -> n) (hxournal_idmap_uuid minfo) minfo m
   put m'
   return minfo
  
-queryHxournal-idmap :: UUID -> Query Hxournal-idmapInfoRepository (Maybe Hxournal-idmapInfo) 
-queryHxournal-idmap uuid = do 
+queryHXournalIDMap :: UUID -> Query HXournalIDMapInfoRepository (Maybe HXournalIDMapInfo) 
+queryHXournalIDMap uuid = do 
   m <- ask 
   return (M.lookup uuid m)
 
-queryAll :: Query Hxournal-idmapInfoRepository [Hxournal-idmapInfo]
+queryAll :: Query HXournalIDMapInfoRepository [HXournalIDMapInfo]
 queryAll = do m <- ask   
               return (M.elems m)
 
 
-updateHxournal-idmap :: Hxournal-idmapInfo -> Update Hxournal-idmapInfoRepository (Maybe Hxournal-idmapInfo)
-updateHxournal-idmap minfo = do 
+updateHXournalIDMap :: HXournalIDMapInfo -> Update HXournalIDMapInfoRepository (Maybe HXournalIDMapInfo)
+updateHXournalIDMap minfo = do 
   m <- get 
-  let (r,m') = M.updateLookupWithKey (\_ _ -> Just minfo) (hxournal-idmap_uuid minfo) m
+  let (r,m') = M.updateLookupWithKey (\_ _ -> Just minfo) (hxournal_idmap_uuid minfo) m
   put m'
   maybe (return Nothing) (const (return (Just minfo))) r 
 
-deleteHxournal-idmap :: UUID -> Update Hxournal-idmapInfoRepository (Maybe Hxournal-idmapInfo)
-deleteHxournal-idmap uuid = do 
+deleteHXournalIDMap :: UUID -> Update HXournalIDMapInfoRepository (Maybe HXournalIDMapInfo)
+deleteHXournalIDMap uuid = do 
   m <- get
   let r = M.lookup uuid m  
   case r of 
@@ -89,4 +89,4 @@ deleteHxournal-idmap uuid = do
     Nothing -> return Nothing
 
 
-$(makeAcidic ''Hxournal-idmapInfoRepository [ 'addHxournal-idmap, 'queryHxournal-idmap, 'queryAll, 'updateHxournal-idmap, 'deleteHxournal-idmap] )
+$(makeAcidic ''HXournalIDMapInfoRepository [ 'addHXournalIDMap, 'queryHXournalIDMap, 'queryAll, 'updateHXournalIDMap, 'deleteHXournalIDMap] )
