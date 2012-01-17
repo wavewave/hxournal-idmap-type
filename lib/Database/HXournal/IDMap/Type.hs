@@ -26,7 +26,8 @@ import Data.Time.Clock
 data HXournalIDMapInfo = HXournalIDMapInfo { 
   hxournal_idmap_uuid :: UUID, 
   hxournal_idmap_name :: String, 
-  hxournal_idmap_creationtime :: UTCTime, 
+  hxournal_idmap_creationtime :: UTCTime,
+  hxournal_idmap_currentversion :: Int,  
   hxournal_idmap_numofpages :: Int
 } deriving (Show,Typeable,Data)
 
@@ -34,16 +35,19 @@ data HXournalIDMapInfo = HXournalIDMapInfo {
 
 instance FromJSON HXournalIDMapInfo where
   parseJSON (Object v) = HXournalIDMapInfo 
-                         <$>  v .: "uuid"
+                         <$> v .: "uuid"
                          <*> v .: "name" 
                          <*> v .: "creationtime"
+                         <*> v .: "currentversion" 
                          <*> v .: "numofpages"
 
 instance ToJSON HXournalIDMapInfo where
-  toJSON (HXournalIDMapInfo uuid name ctime npage) = object [ "uuid" .= uuid
-                                                      , "name" .= name
-                                                      , "creationtime" .= ctime 
-                                                      , "numofpages" .= npage] 
+  toJSON (HXournalIDMapInfo uuid name ctime version npage) = 
+    object [ "uuid" .= uuid
+           , "name" .= name
+           , "creationtime" .= ctime 
+           , "currentversion" .= version
+           , "numofpages" .= npage] 
 
 
 $(deriveSafeCopy 0 'base ''HXournalIDMapInfo)
